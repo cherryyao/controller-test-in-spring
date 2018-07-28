@@ -49,7 +49,7 @@ public class CompanyControllerTest {
     private ObjectMapper mapper;
 
     @Test
-    public void createCompany() throws Exception{
+    public void should_create_new_Company() throws Exception{
         //given
         Company company = new Company("oocl");
         when(companyService.createCompany(any(Company.class))).thenReturn(true);

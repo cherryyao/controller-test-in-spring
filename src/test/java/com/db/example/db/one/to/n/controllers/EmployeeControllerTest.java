@@ -24,6 +24,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.when;
@@ -117,6 +118,23 @@ public class EmployeeControllerTest {
     }
 
     @Test
-    public void getEmployeesByPage()throws Exception {
+    public void should_get_Employees_By_Page_when_given_page_1_pageSize_1()throws Exception {
+        //given
+        Employee employee1 = new Employee(1L,"ocean","male");
+        Employee employee2 = new Employee(2L,"ocean22","female");
+        EmployeeDTO employeeDTO1 = new EmployeeDTO(employee1);
+        EmployeeDTO employeeDTO2 = new EmployeeDTO(employee2);
+        List<EmployeeDTO> employees = Arrays.asList(employeeDTO1,employeeDTO2);
+        given(employeeService.getEmployeesByPage(anyInt(),anyInt())).willReturn(employees);
+
+        //when
+        ResultActions result = mvc.perform(get("/employees/page/1/size/1"));
+
+        //then
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$",hasSize(2)))
+                .andExpect(jsonPath("$[0].id",is(1)))
+                .andExpect(jsonPath("$[0].name",is("ocean")))
+                .andExpect(jsonPath("$[1].id",is(2)));
     }
 }

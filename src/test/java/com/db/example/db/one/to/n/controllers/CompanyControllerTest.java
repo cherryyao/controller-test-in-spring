@@ -150,10 +150,15 @@ public class CompanyControllerTest {
     @Test
     public void should_return_status_when_update_Company() throws Exception{
         //given
-        Company company = new Company("oocl");
-        when(companyService.updateCompany(any())).thenReturn()
+        Company company = new Company(1L,"oocl");
+        when(companyService.updateCompany(any())).thenReturn(true);
         //when
+        ResultActions result = mvc.perform(put("companies/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(company)));
         //then
+        result.andExpect(status().isOk())
+                .andDo(print());
     }
 
     @Test

@@ -4,6 +4,7 @@ import com.db.example.db.one.to.n.dto.CompanyDTO;
 import com.db.example.db.one.to.n.entities.Company;
 import com.db.example.db.one.to.n.services.CompanyService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +85,19 @@ public class CompanyControllerTest {
     }
 
     @Test
-    public void getCompanyById() throws Exception{
+    public void should_get_Company_By_Id() throws Exception{
+        //given
+        Company company1 = new Company(1L,"oocl");
+        System.out.println(company1.getId());
+        CompanyDTO companyDTO = new CompanyDTO(company1);
+        System.out.println(companyDTO.getId());
+        when(companyService.getCompanyById(1L)).thenReturn(companyDTO);
+        //when
+        ResultActions result = mvc.perform(get("/companies/{1}",1L));
+        //then
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(companyDTO.getId().intValue())))
+                .andExpect(jsonPath("$.name",containsString("oocl")));
     }
 
     @Test

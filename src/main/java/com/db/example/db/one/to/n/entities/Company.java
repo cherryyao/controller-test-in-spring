@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class Company {
+public class
+Company {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

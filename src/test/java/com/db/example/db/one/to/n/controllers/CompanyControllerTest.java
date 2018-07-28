@@ -1,7 +1,9 @@
 package com.db.example.db.one.to.n.controllers;
 
 import com.db.example.db.one.to.n.dto.CompanyDTO;
+import com.db.example.db.one.to.n.dto.EmployeeDTO;
 import com.db.example.db.one.to.n.entities.Company;
+import com.db.example.db.one.to.n.entities.Employee;
 import com.db.example.db.one.to.n.services.CompanyService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.CoreMatchers;
@@ -22,15 +24,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -101,15 +103,57 @@ public class CompanyControllerTest {
     }
 
     @Test
-    public void getCompaniesByPage() throws Exception{
+    public void should_get_Companies_By_Page() throws Exception{
+        //given
+        Company company1 = new Company(1L,"oocl");
+        Company company2 = new Company(2L,"abc");
+        Company company3 = new Company(3L,"ddd");
+        CompanyDTO companyDTO1 = new CompanyDTO(company1);
+        CompanyDTO companyDTO2 = new CompanyDTO(company2);
+        List<CompanyDTO> companyList = Arrays.asList(companyDTO1,companyDTO2);
+        when(companyService.getCompaniesByPage(anyInt(),anyInt())).thenReturn(companyList);
+        //when
+        ResultActions result = mvc.perform(get("/companies/page/1/pageSize/2"));
+
+        //then
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$",hasSize(2)))
+                .andExpect(jsonPath("$[0].id",is(1)))
+                .andExpect(jsonPath("$[0].name",containsString("oocl")))
+                .andExpect(jsonPath("$[1].id",is(2)))
+                .andExpect(jsonPath("$[1].name",containsString("abc")));
     }
 
     @Test
-    public void getEmployeesFromCompany() throws Exception{
+    public void shoule_get_Employees_From_Company_when_given_companyId() throws Exception{
+        //given
+
+        Employee employee1 = new Employee("jack","male");
+        Employee employee2 = new Employee("tom","male");
+        EmployeeDTO employeeDTO1 = new EmployeeDTO(employee1);
+        EmployeeDTO employeeDTO2 = new EmployeeDTO(employee2);
+        List<EmployeeDTO> employeeDTOList = Arrays.asList(employeeDTO1,employeeDTO2);
+        when(companyService.getEmployeesFromCompany(anyInt())).thenReturn(employeeDTOList);
+        //when
+        ResultActions result = mvc.perform(get("companies/1/employees"));
+        //then
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$",hasSize(2)))
+                .andExpect(jsonPath("$[0].id",is(1)))
+                .andExpect(jsonPath("$[0].name",containsString("jack")))
+                .andExpect(jsonPath("$[0].gender",is("male")))
+                .andExpect(jsonPath("$[1].id",is(2)))
+                .andExpect(jsonPath("$[1].name",containsString("tom")))
+                .andExpect(jsonPath("$[1].gender",is("male")));
     }
 
     @Test
-    public void updateCompany() throws Exception{
+    public void should_return_status_when_update_Company() throws Exception{
+        //given
+        Company company = new Company("oocl");
+        when(companyService.updateCompany(any())).thenReturn()
+        //when
+        //then
     }
 
     @Test

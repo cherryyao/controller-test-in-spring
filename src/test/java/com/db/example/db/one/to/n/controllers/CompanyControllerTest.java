@@ -91,7 +91,7 @@ public class CompanyControllerTest {
         System.out.println(company1.getId());
         CompanyDTO companyDTO = new CompanyDTO(company1);
         System.out.println(companyDTO.getId());
-        when(companyService.getCompanyById(1L)).thenReturn(companyDTO);
+        when(companyService.getCompanyById(any())).thenReturn(companyDTO);
         //when
         ResultActions result = mvc.perform(get("/companies/{1}",1L));
         //then
@@ -164,9 +164,10 @@ public class CompanyControllerTest {
         //given
         Company company1 = new Company(1L,"oocl");
         Company company2 = new Company(2L,"aaa");
-        when(companyService.deleteCompany(anyInt())).thenReturn(company1);
+        given(companyService.deleteCompany(anyInt())).willReturn(company1);
+        //when(companyController.deleteCompany(any())).thenReturn(company1);
         //when
-        ResultActions result = mvc.perform(delete("/companies/1"));
+        ResultActions result = mvc.perform(delete("/companies/{id}",1));
         //then
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.id",is(1)))

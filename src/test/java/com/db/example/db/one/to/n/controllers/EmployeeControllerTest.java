@@ -25,6 +25,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -99,7 +100,20 @@ public class EmployeeControllerTest {
     }
 
     @Test
-    public void getMaleEmployee() throws Exception{
+    public void should_get_Male_Employee_when_given_male() throws Exception{
+        //given
+        Employee employee1 = new Employee(1L,"jack","male");
+        Employee employee2 = new Employee(2L,"mary","female");
+        EmployeeDTO employeeDTO1 = new EmployeeDTO(employee1);
+        EmployeeDTO employeeDTO2 = new EmployeeDTO(employee2);
+        List<EmployeeDTO> employeeDTOList = Arrays.asList(employeeDTO1);
+        when(employeeService.getMaleEmployee()).thenReturn(employeeDTOList);
+        //when
+        ResultActions result = mvc.perform(get("/employees/male"));
+        //then
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id",is(1)))
+                .andExpect(jsonPath("$[0].name",is("jack")));
     }
 
     @Test

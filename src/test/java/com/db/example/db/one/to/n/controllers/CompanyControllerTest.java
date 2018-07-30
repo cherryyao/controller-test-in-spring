@@ -28,6 +28,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -164,10 +165,11 @@ public class CompanyControllerTest {
         //given
         Company company1 = new Company(1L,"oocl");
         Company company2 = new Company(2L,"aaa");
-        given(companyService.deleteCompany(anyInt())).willReturn(company1);
+        given(companyService.deleteCompany(anyLong())).willReturn(company1);
         //when(companyController.deleteCompany(any())).thenReturn(company1);
+
         //when
-        ResultActions result = mvc.perform(delete("/companies/{id}",1));
+        ResultActions result = mvc.perform(delete("/companies/{id}",1L));
         //then
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.id",is(1)))
